@@ -7,7 +7,7 @@
             <el-col :offset="6" :span="12" align="center">
               <div style="margin-top: 4px">
                 <el-input
-                    placeholder="请输入内容"
+                    placeholder="请输入关键字进行搜索"
                     v-model="input"
                     @input="search"
                     @clear="getUsers"
@@ -32,7 +32,7 @@
         v-loading="loading"
         element-loading-text="拼命加载中"
         element-loading-spinner="el-icon-loading"
-        element-loading-background="rgba(229, 255, 253, 0.8)"
+        element-loading-background="rgb(243, 244, 246, 0.8)"
         stripe>
       <el-table-column type="index" label="序号" align="center" width="180">
         <template slot-scope="scope"><span>{{ scope.$index+1}}</span></template>
@@ -54,11 +54,11 @@
         </template>
       </el-table-column>
       <el-table-column
-          label="分数"
+          label="权限"
           width="260"
           align="center">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.score }}</span>
+          <span style="margin-left: 10px">{{ scope.row.auth }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center">
@@ -97,6 +97,17 @@
           <el-input v-model="addData.password" placeholder="请输入密码" show-password :maxlength="16" clearable
                     prefix-icon='el-icon-lock' :style="{width: '100%'}"></el-input>
         </el-form-item>
+        <el-form-item label="权限" prop="password">
+          <el-dropdown @command="command" trigger="click">
+            <span class="el-dropdown-link">
+              {{ addData.auth }}<i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item icon="el-icon-user" command="普通用户">普通用户</el-dropdown-item>
+              <el-dropdown-item icon="el-icon-s-check" command="管理员">管理员</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </el-form-item>
       </el-form>
       <div slot="footer" align="center">
         <el-button @click="addVisible = false">取消</el-button>
@@ -118,9 +129,16 @@
           <el-input v-model="editData.password" placeholder="请输入密码" :maxlength="16" clearable
                     prefix-icon='el-icon-lock' :style="{width: '100%'}"></el-input>
         </el-form-item>
-        <el-form-item label="分数" prop="score">
-          <el-input v-model="editData.score" placeholder="请输入新分数" :maxlength="6" clearable
-                    prefix-icon='el-icon-document-remove' :style="{width: '100%'}"></el-input>
+        <el-form-item label="权限">
+          <el-dropdown @command="editCommand" trigger="click">
+            <span class="el-dropdown-link">
+              {{ editData.auth }}<i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item icon="el-icon-user" command="普通用户">普通用户</el-dropdown-item>
+              <el-dropdown-item icon="el-icon-s-check" command="管理员">管理员</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </el-form-item>
       </el-form>
       <div slot="footer" align="center">
@@ -150,7 +168,7 @@ export default {
       addData: {
         name: '',
         password: '',
-        score: parseInt(Math.random() * 10 + 90)
+        auth: '普通用户'
       },
       editData: {},
       rules: {
@@ -168,17 +186,20 @@ export default {
     }
   },
   methods: {
-    // 获取所有人员数据
+    /**
+     * 获取所有人员信息
+     */
     getUsers() {
-      this.$http.get('person').then(res => {
+      this.$http.get(`person/${this.input}`).then(res => {
         setTimeout(() => {
-          console.log('查询')
           this.users = res.data.data;
           this.loading = false
         }, 500)
       })
     },
-    // 添加新人员数据
+    /*
+    * 添加新人员数据
+    * */
     addConfirm() {
       this.$refs['addForm'].validate(valid => {
         if (valid) {
@@ -187,25 +208,27 @@ export default {
             this.$message.success(res.data.msg);
             this.getUsers();
             this.addVisible = false;
-            this.addData = {name: '', password: '', score: parseInt(Math.random() * 10 + 90)}
+            this.addData = {name: '', password: '', auth: '普通用户'}
           })
         }
       })
     },
-    // 打开编辑弹窗，将选中的行的数据赋值给 editData
+
+    /*
+    * 打开编辑弹窗，将选中的行的数据赋值给 editData
+    * */
     handleEdit(index, row) {
       this.editData = row;
       this.editVisible = true;
     },
 
-    // 提交修改后的人员信息
     editConfirm() {
       this.$refs['editForm'].validate(valid => {
         if (valid) {
           this.$http.put('person', this.editData).then(res => {
             this.$message.success(res.data.msg);
             this.editVisible = false;
-            this.getUsers();
+            this.input !== null || this.input !== '' ? this.search() : this.getUsers();
           })
         }
       })
@@ -247,13 +270,23 @@ export default {
     },
 
     search() {
-      this.$http.get(`searchPerson/${this.input}`).then(res => {
+      this.$http.get(`person/${this.input}`).then(res => {
         this.loading = true;
         setTimeout(() => {
           this.users = res.data.data;
           this.loading = false;
         }, 500)
       })
+    },
+
+    /**
+     * 下拉菜单的回调
+     */
+    command(c) {
+      this.addData.auth = c;
+    },
+    editCommand(c) {
+      this.editData.auth = c;
     }
   },
 
@@ -271,5 +304,21 @@ export default {
 .pagination {
   text-align: center;
   margin-top: 20px;
+}
+
+.el-dropdown-link {
+  cursor: pointer;
+  color: #000000;
+}
+
+.el-icon-arrow-down {
+  font-size: 12px;
+}
+
+.demonstration {
+  display: block;
+  color: #8492a6;
+  font-size: 14px;
+  margin-bottom: 20px;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <el-row :gutter="15">
-      <el-col :span="12">
+      <el-col :span="16">
         <div>
           <el-row :gutter="24">
             <el-col :offset="6" :span="12" align="center">
@@ -19,9 +19,14 @@
           </el-row>
         </div>
       </el-col>
-      <el-col :span="12">
+      <el-col :span="4">
         <div style="display: flex; justify-content: center">
-          <el-button type="success" size="large" @click="addVisible = true">新 增</el-button>
+          <el-button type="success" size="large" icon="el-icon-plus" @click="addVisible = true">新 增</el-button>
+        </div>
+      </el-col>
+      <el-col :span="4">
+        <div style="display: flex; justify-content: center">
+          <el-button type="info" size="large" @click="Out">登 出</el-button>
         </div>
       </el-col>
     </el-row>
@@ -65,10 +70,12 @@
         <template slot-scope="scope">
           <el-button
               size="mini"
+              icon="el-icon-edit"
               @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button
               size="mini"
               type="danger"
+              icon="el-icon-delete"
               @click="handleDelete(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -82,6 +89,7 @@
         :total="users.length"
         @current-change="current_change">
     </el-pagination>
+
     <!--  添加人员信息  -->
     <el-dialog
         title="添加人员信息"
@@ -204,7 +212,6 @@ export default {
       this.$refs['addForm'].validate(valid => {
         if (valid) {
           this.$http.post('person', this.addData).then(res => {
-            console.log(res.data);
             this.$message.success(res.data.msg);
             this.getUsers();
             this.addVisible = false;
@@ -246,7 +253,6 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http.delete(`person/${row.id}`).then(res => {
-          console.log(res.data);
           this.$message.success(res.data.msg);
           this.getUsers();
           this.visible = false;
@@ -277,6 +283,21 @@ export default {
           this.loading = false;
         }, 500)
       })
+    },
+
+    /**
+     *  登出
+     */
+    Out() {
+      this.$confirm('即将退出系统，是否继续?', '提示', {
+        confirmButtonText: '退出',
+        cancelButtonText: '点错了',
+        type: 'warning'
+      }).then(() => {
+        this.$router.push("/");
+      }).catch(() => {
+
+      });
     },
 
     /**

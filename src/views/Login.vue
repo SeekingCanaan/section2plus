@@ -86,13 +86,14 @@ export default {
         if (valid) {
           let that = this;
           this.$http.post('person/login', this.formData).then(res => {
-            if (res.data.msg === '登陆成功') {
-              this.$message.success(res.data.msg);
+            console.log(res.data.data === undefined)
+            if (res.data.data !== undefined) {
+              this.$message.success("登陆成功");
               setTimeout(() => {
                 that.$router.push('/home');
               }, 300)
             } else {
-              this.$message.warning(res.data.msg);
+              this.$message.warning("用户名或密码错误");
             }
           })
         }

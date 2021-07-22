@@ -9,7 +9,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 // 引入 axios
 import axios from 'axios'
 Vue.prototype.$http = axios.create({
-  baseURL: 'http://localhost:8888/',
+  baseURL: 'http://localhost:8080/',
   timeout: 5000
 })
 

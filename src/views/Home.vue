@@ -1,36 +1,36 @@
 <template>
   <div class="home">
-    <el-row :gutter="15">
+    <!--  搜索框和按钮布局  -->
+    <el-row :gutter="2">
       <el-col :span="16">
-        <div>
-          <el-row :gutter="24">
-            <el-col :offset="6" :span="12" align="center">
-              <div style="margin-top: 4px">
+        <div style="margin-bottom: 1rem">
+          <el-row :gutter="2">
+            <el-col :offset="6" :span="8" align="center">
+              <div style="display: flex; justify-content: center; align-items: center">
                 <el-input
-                    placeholder="请输入关键字进行搜索"
+                    prefix-icon="el-icon-search"
+                    placeholder="输入关键字搜索"
                     v-model="input"
                     @input="search"
                     @clear="getUsers"
                     clearable>
                 </el-input>
+                <el-button style="margin-left: 1rem" type="success" icon="el-icon-plus" @click="addVisible = true">新 增</el-button>
+
               </div>
             </el-col>
-
           </el-row>
         </div>
       </el-col>
-      <el-col :span="4">
+      <el-col :span="4" :offset="4">
         <div style="display: flex; justify-content: center">
-          <el-button type="success" size="large" icon="el-icon-plus" @click="addVisible = true">新 增</el-button>
-        </div>
-      </el-col>
-      <el-col :span="4">
-        <div style="display: flex; justify-content: center">
-          <el-button type="info" size="large" @click="Out">登 出</el-button>
+          <el-button type="info" @click="Out">登 出</el-button>
         </div>
       </el-col>
     </el-row>
-      <el-table
+
+    <!--  数据展示  -->
+    <el-table
         height="266px"
         :data="users.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
         style="width: 100%"
@@ -80,6 +80,8 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <!--  分页  -->
     <el-pagination
         class="pagination"
         background
@@ -229,6 +231,9 @@ export default {
       this.editVisible = true;
     },
 
+    /**
+     * 提交编辑人员的信息
+     */
     editConfirm() {
       this.$refs['editForm'].validate(valid => {
         if (valid) {
@@ -267,6 +272,8 @@ export default {
         });
       });
     },
+
+
     handleClose() {
       this.addVisible = false;
     },
@@ -319,7 +326,7 @@ export default {
 
 <style scoped>
 .home {
-
+  margin-top: 20px;
 }
 
 .pagination {

@@ -8,7 +8,7 @@
         </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input v-model="formData.password" placeholder="请输入密码" :maxlength="16" clearable
-                    prefix-icon='el-icon-lock' :style="{width: '100%'}"></el-input>
+                    prefix-icon='el-icon-lock' show-password :style="{width: '100%'}"></el-input>
         </el-form-item>
         <el-form-item size="large">
           <el-button type="primary" @click="submitForm">登 陆</el-button>
@@ -81,6 +81,9 @@ export default {
     }
   },
   methods: {
+    /**
+     * 登陆验证
+     */
     submitForm() {
       this.$refs['elForm'].validate(valid => {
         if (valid) {
@@ -99,12 +102,15 @@ export default {
         }
       })
     },
+    /**
+     * 清空登陆表单
+     */
     resetForm() {
       this.$refs['elForm'].resetFields()
     },
 
     /*
-    * 添加新人员数据
+    * 仿注册
     * */
     addConfirm() {
       this.$refs['registerForm'].validate(valid => {

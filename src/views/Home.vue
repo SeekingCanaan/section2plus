@@ -167,20 +167,31 @@ export default {
   },
   data() {
     return {
+      // 添加 dialog 的 显示/隐藏
       addVisible: false,
+      // 编辑 dialog 的 显示/隐藏
       editVisible: false,
+      // 搜索框内容
       input: '',
+      // 数据加载效果
       loading: true,
-      total: 0, // 默认数据页数
-      pageSize: 5,  // 每页显示数据条数
-      currentPage: 1, // 当前所在页数
+      // 默认数据页数
+      total: 0,
+      // 每页显示数据条数
+      pageSize: 5,
+      // 当前所在页数
+      currentPage: 1,
+      // 展示的数据
       users: [],
+      // 添加表单对象
       addData: {
         name: '',
         password: '',
         auth: '普通用户'
       },
+      // 编辑表单对象
       editData: {},
+      // 表单规则
       rules: {
         name: [{
           required: true,
@@ -273,15 +284,23 @@ export default {
       });
     },
 
-
+    /**
+     * 关闭表单
+     */
     handleClose() {
       this.addVisible = false;
     },
 
+    /**
+     * 换页
+     */
     current_change(currentPage) {
       this.currentPage = currentPage;
     },
 
+    /**
+     * 换页
+     */
     search() {
       this.$http.get(`person/${this.input}`).then(res => {
         this.loading = true;
@@ -308,7 +327,7 @@ export default {
     },
 
     /**
-     * 下拉菜单的回调
+     *
      */
     command(c) {
       this.addData.auth = c;
